@@ -1,6 +1,5 @@
 package co.edu.uniandes.fp.fp;
 
-
 import co.edu.uniandes.fp.processor.C1Processor;
 import spoon.Launcher;
 import spoon.processing.ProcessingManager;
@@ -15,7 +14,7 @@ public class FP
     public static void main( String[] a )
     {
     	final String[] args = {
-				"-i", "src\\main\\java\\co\\edu\\uniandes\\fp\\analysis\\Test.java",
+				"-i", "src/main/java/co/edu/uniandes/fp/analysis/Test.java",
 				"-o", "target/spooned/",
 		};
     	
