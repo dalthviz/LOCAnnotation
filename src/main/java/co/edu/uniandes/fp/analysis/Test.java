@@ -17,10 +17,11 @@ public class Test {
 	 * A method with only one case into consideration and statements inside
 	 * @return
 	 */
-	@C1
+	@C1 
 	public int statementsTest() {
 		int a = 1;
-		return a;
+		int b = 2;
+		return a + b;
 	}
 	
 	/**

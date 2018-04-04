@@ -9,7 +9,8 @@ public class Test {
     @co.edu.uniandes.fp.annotation.C1
     public int statementsTest() {
         int a = 1;
-        return a;
+        int b = 2;
+        return a + b;
     }
 
     @co.edu.uniandes.fp.annotation.C1
