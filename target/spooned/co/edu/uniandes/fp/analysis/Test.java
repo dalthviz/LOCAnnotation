@@ -2,19 +2,18 @@ package co.edu.uniandes.fp.analysis;
 
 
 public class Test {
-    @co.edu.uniandes.fp.annotation.C1
+    @co.edu.uniandes.fp.annotation.CU(useCases = { "C1" })
     public void nonStatementsTest() {
     }
 
-    @co.edu.uniandes.fp.annotation.C1
+    @co.edu.uniandes.fp.annotation.CU(useCases = { "C1" })
     public int statementsTest() {
         int a = 1;
         int b = 2;
         return a + b;
     }
 
-    @co.edu.uniandes.fp.annotation.C1
-    @co.edu.uniandes.fp.annotation.C2
+    @co.edu.uniandes.fp.annotation.CU(useCases = { "C1" , "C2" })
     public int statementsMixTest() {
         int a = 1;
         int b = 2;

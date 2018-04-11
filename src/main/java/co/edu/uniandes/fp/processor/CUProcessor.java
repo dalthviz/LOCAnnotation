@@ -1,18 +1,17 @@
 package co.edu.uniandes.fp.processor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import co.edu.uniandes.fp.annotation.C2;
+import co.edu.uniandes.fp.annotation.CU;
 import spoon.processing.AbstractAnnotationProcessor;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.declaration.CtMethod;
 
-public class C2Processor extends AbstractAnnotationProcessor<C2, CtMethod<?>>{
+public class CUProcessor extends AbstractAnnotationProcessor<CU, CtMethod<?>>{
 
-	public final List<Double> countOfCaseMethods = new ArrayList<Double>();
+	public final HashMap<String, Double> countOfCaseMethods = new HashMap<String, Double>();
 		
 	private double controlStatementsCount(String body) {
 		double count = 0.0;
@@ -45,22 +44,24 @@ public class C2Processor extends AbstractAnnotationProcessor<C2, CtMethod<?>>{
 	}
 
 	@Override
-	public void process(C2 annotation, CtMethod<?> method) {
+	public void process(CU annotation, CtMethod<?> method) {
 		CtBlock<?> body = method.getBody();
 		
+		// TODO Count the number of statements in the body of the method, add number to count;
 		double loc = 0;
+		String[] cases = method.getAnnotation(CU.class).useCases();
 		double numStatements = body.getStatements().size() + controlStatementsCount(body.toString()) + 2;
-		double numAnnotations = method.getAnnotations().size()!= 0?method.getAnnotations().size():1;
-		loc = numStatements/numAnnotations;        
-        countOfCaseMethods.add(loc);
+		double numCases = cases.length!= 0?cases.length:1;
+		loc = numStatements/numCases;
+		
+		for (String cu : cases) {
+			if(countOfCaseMethods.containsKey(cu)) {
+				double count = countOfCaseMethods.get(cu) + loc;
+				countOfCaseMethods.put(cu, count);
+			}else {
+				countOfCaseMethods.put(cu, loc);
+			}
+		}
 	}
 	
-	public double totalLOC() {
-		double total = 0.0;
-		for(double loc: countOfCaseMethods) {
-			total+=loc;
-		}
-		return total;
-	}
-
 }
