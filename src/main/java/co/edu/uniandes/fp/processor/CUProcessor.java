@@ -40,6 +40,22 @@ public class CUProcessor extends AbstractAnnotationProcessor<CU, CtMethod<?>>{
 		while(m.find()){
 		    count+=2;
 		}
+		p = Pattern.compile("\\btry\\b");
+		m = p.matcher(body);
+		while(m.find()){
+		    count+=2;
+		}
+		p = Pattern.compile("\\bcatch\\b");
+		m = p.matcher(body);
+		while(m.find()){
+		    count+=2;
+		}
+		p = Pattern.compile("\\bfinally\\b");
+		m = p.matcher(body);
+		while(m.find()){
+		    count+=2;
+		}
+		
 		return count;
 	}
 
