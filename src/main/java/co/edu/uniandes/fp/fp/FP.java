@@ -85,28 +85,30 @@ public class FP
 				BufferedWriter writer = Files.newBufferedWriter(Paths.get(route));
 
 				CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-						.withHeader("Case", "LOC"));
+						.withHeader("Case", "LOC", "%"));
 				) {
 
-			String leftAlignFormat = " %-5s | %.2f  %n";
+			String leftAlignFormat = " %-5s | %.2f  | %.2f %n";
 			double countToAdd = 0.0;
 
-			System.out.format("-------|--------%n");
-			System.out.format(" Case  | LOC    %n");
-			System.out.format("-------|--------%n");
+			System.out.format("-------|--------|------------%n");
+			System.out.format(" Case  | LOC    | Proportion %n");
+			System.out.format("-------|--------|------------%n");
 
 			for (Entry<String, Double> entry: cases.entrySet()) {
 				countToAdd += entry.getValue();
 			}
 			countToAdd = (lines - countToAdd) / (double) cases.size();
 			for (Entry<String, Double> entry: cases.entrySet()) {
-				System.out.format(leftAlignFormat, entry.getKey(), entry.getValue() + countToAdd);
-				csvPrinter.printRecord(entry.getKey(), entry.getValue() + countToAdd);
+				System.out.format(leftAlignFormat, entry.getKey(), entry.getValue() + countToAdd,
+						(entry.getValue() + countToAdd)/lines);
+				csvPrinter.printRecord(entry.getKey(), entry.getValue() + countToAdd,
+						(entry.getValue() + countToAdd)/lines);
 			}
-			System.out.format(leftAlignFormat, "Total", lines);
-			csvPrinter.printRecord("Total", lines);
+			System.out.format(leftAlignFormat, "Total", lines, 1.0);
+			csvPrinter.printRecord("Total", lines, 1.0);
 			
-			System.out.format("-------|--------%n");
+			System.out.format("-------|--------|------------%n");
 
 			csvPrinter.flush();            
 		}

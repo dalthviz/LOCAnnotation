@@ -2,12 +2,12 @@ package co.edu.uniandes.fp.analysis;
 
 import co.edu.uniandes.fp.annotation.CU;
 
-public class Test {
+public class Test2 {
 	
 	/**
 	 * A method with only one case into consideration and no statements inside
 	 */
-	@CU(useCases = { "C1", "C3" })
+	@CU(useCases = { "C1" })
 	public void nonStatementsTest() {
 		
 	}
@@ -27,7 +27,7 @@ public class Test {
 	 * A method with more than one case into consideration
 	 * @return
 	 */
-	@CU(useCases = { "C1", "C2", "C3" })
+	@CU(useCases = { "C1", "C2" })
 	public int statementsMixTest() {
 		int a = 1;
 		int b = 2;
