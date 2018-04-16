@@ -89,13 +89,13 @@ public class FP
 			}
 
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Invalid properties file", "Error", JOptionPane.ERROR_MESSAGE);
 		} finally {
 			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Invalid properties file", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
