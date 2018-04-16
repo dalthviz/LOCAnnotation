@@ -3,21 +3,25 @@ package co.edu.uniandes.fp.fp;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
-import co.edu.uniandes.fp.processor.CUProcessor;
+import co.edu.uniandes.fp.processor.FPProcessor;
 import spoon.Launcher;
 import spoon.processing.ProcessingManager;
 import spoon.reflect.factory.Factory;
@@ -28,32 +32,74 @@ import spoon.support.QueueProcessingManager;
  */
 public class FP 
 {
+	private static String[] paths;
 	/**
 	 * Run the application
 	 * @param a
 	 */
 	public static void main( String[] a )
 	{
-		final String[] args = {
-				"-i", "src/main/java/co/edu/uniandes/fp/analysis/",
-				"-o", "target/spooned/",
-		};
-		try {
-			// Total LOC
-			double lines = 0.0;
-			List<File> files = Files.walk(Paths.get("src/main/java/co/edu/uniandes/fp/analysis/"))
-					.filter(Files::isRegularFile)
-					.map(Path::toFile)
-					.collect(Collectors.toList());
-			for (File file : files) {
-				lines += (double)getLines(file);
+		readProperties();
+
+		for(int i = 0; i < paths.length; i++) {
+			
+			String path = paths[i];
+			final String[] args = {
+					"-i", path,
+					"-o", "target/spooned/",
+			};
+			try {
+				// Total LOC
+				double lines = 0.0;
+				List<File> files = Files.walk(Paths.get(path))
+						.filter(Files::isRegularFile)
+						.map(Path::toFile)
+						.collect(Collectors.toList());
+				for (File file : files) {
+					lines += (double)getLines(file);
+				}
+				//CSV generation;
+				HashMap<String, Double> cases = doFPProcess(args).countOfCaseMethods;
+				CSVExport("target/spooned/export"+i+".csv", cases, lines, path);
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
-			//CSV generation;
-			HashMap<String, Double> cases = doCUProcess(args).countOfCaseMethods;
-			CSVExport("target/spooned/export.csv", cases, lines);
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
+
+	}
+
+	/**
+	 * Read properties file with the paths to analyze
+	 */
+	private static void readProperties() {
+		Properties prop = new Properties();
+		InputStream input = null;
+		try {
+
+			input = new FileInputStream("./data/paths.properties");
+
+			// load a properties file
+			prop.load(input);
+
+			// get the property value and print it out
+			int numPaths = Integer.parseInt(prop.getProperty("packages"));
+			paths = new String[numPaths];
+			for(int i = 0; i<numPaths; i++) {
+				paths[i] = prop.getProperty("path"+i);
+			}
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -61,14 +107,14 @@ public class FP
 	 * @param args
 	 * @return
 	 */
-	private static CUProcessor doCUProcess(String[] args) {
+	private static FPProcessor doFPProcess(String[] args) {
 		final Launcher launcher = new Launcher();
 		launcher.setArgs(args);
 		launcher.run();
 
 		final Factory factory = launcher.getFactory();
 		final ProcessingManager processingManager = new QueueProcessingManager(factory);
-		final CUProcessor processor = new CUProcessor();
+		final FPProcessor processor = new FPProcessor();
 		processingManager.addProcessor(processor);
 		processingManager.process(factory.Class().getAll());
 
@@ -80,7 +126,7 @@ public class FP
 	 * @param route
 	 * @throws IOException
 	 */
-	private static void CSVExport(String route, HashMap<String, Double> cases, double lines) throws IOException {
+	private static void CSVExport(String route, HashMap<String, Double> cases, double lines, String path) throws IOException {
 		try (
 				BufferedWriter writer = Files.newBufferedWriter(Paths.get(route));
 
@@ -90,7 +136,7 @@ public class FP
 
 			String leftAlignFormat = " %-5s | %.2f  | %.2f %n";
 			double countToAdd = 0.0;
-
+			System.out.format(path+"%n");
 			System.out.format("-------|--------|------------%n");
 			System.out.format(" Case  | LOC    | Proportion %n");
 			System.out.format("-------|--------|------------%n");
@@ -107,7 +153,9 @@ public class FP
 			}
 			System.out.format(leftAlignFormat, "Total", lines, 1.0);
 			csvPrinter.printRecord("Total", lines, 1.0);
+			csvPrinter.printRecord("PATH", path);
 			
+
 			System.out.format("-------|--------|------------%n");
 
 			csvPrinter.flush();            
@@ -131,7 +179,8 @@ public class FP
 				isEOF=true;
 				t=t.replaceAll("\\n|\\t|\\s", "");
 				if(!t.equals("") && !t.startsWith("//")
-						&& !t.startsWith("/*") && !t.startsWith("*") && !t.startsWith("*/")) {
+						&& !t.startsWith("/*") && !t.startsWith("*")
+						&& !t.startsWith("*/") && !t.startsWith("@FP")) {
 					i = i + 1;
 				}
 			}
@@ -143,5 +192,5 @@ public class FP
 		fr.close();
 		return i;
 	}
-	
+
 }

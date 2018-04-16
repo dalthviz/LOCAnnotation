@@ -1,33 +1,37 @@
 package co.edu.uniandes.fp.analysis;
 
 import co.edu.uniandes.fp.annotation.FP;
+import java.util.ArrayList;
 
-public class Test {
+@FP(useCases= {"C4"})
+public class Test3 {
+	
+	private int attribute = 0;
+	private ArrayList<Integer> array = new ArrayList<>();
 	
 	/**
-	 * A method with two case into consideration and no statements inside
+	 * A method with only one case into consideration and no statements inside
 	 */
-	@FP(useCases = { "C1", "C3" })
 	public void nonStatementsTest() {
-		
+
 	}
 	
 	/**
 	 * A method with only one case into consideration and statements inside
 	 * @return
 	 */
-	@FP(useCases = { "C1" })
 	public int statementsTest() {
 		int a = 1;
 		int b = 2;
-		return a + b;
+		array.add(new Integer(a));
+		return a + b + attribute;
 	}
 	
 	/**
 	 * A method with more than one case into consideration
 	 * @return
 	 */
-	@FP(useCases = { "C1", "C2", "C3" })
+	@FP(useCases = {"C2"})
 	public int statementsMixTest() {
 		int a = 1;
 		int b = 2;
@@ -36,6 +40,5 @@ public class Test {
 		}
 		return a + b;
 	}
-	
 	
 }
