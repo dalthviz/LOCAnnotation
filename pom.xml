@@ -13,7 +13,29 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
+  	<!-- General dependencies management -->
+	<dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>1.1.11.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.persistence</groupId>
+                <artifactId>org.eclipse.persistence.moxy</artifactId>
+                <version>2.6.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>mvc-auth-commons</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+         
+        </dependencies>
+    </dependencyManagement>
   	<dependencies>
 		<dependency>
 			<groupId>org.mdkt.compiler</groupId>
@@ -23,7 +45,7 @@
 		<dependency>
 			<groupId>fr.inria.gforge.spoon</groupId>
 			<artifactId>spoon-core</artifactId>
-			<version>5.9.0</version>
+			<version>6.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -65,6 +87,53 @@
 			<artifactId>core</artifactId>
 			<version>3.3.0-v_771</version>
 		</dependency>
+		<!-- Logic Dependencies -->	
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+        <!-- General Dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main.extras</groupId>
+            <artifactId>glassfish-embedded-all</artifactId>
+            <version>4.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-glassfish-embedded-3.1</artifactId>
+            <version>1.0.0.CR4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>uk.co.jemos.podam</groupId>
+            <artifactId>podam</artifactId>
+            <version>6.0.2.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-depchain</artifactId>
+            <scope>test</scope>
+            <type>pom</type>
+        </dependency>
+        <!-- Annotation dependency -->
+        <dependency>
+		    <groupId>com.github.dalthviz</groupId>
+		    <artifactId>FPAnnotation</artifactId>
+		    <version>0.0.1-SNAPSHOT</version>
+		</dependency>
   	</dependencies>
 
 	<build>
@@ -98,5 +167,9 @@
                 <url>http://spoon.gforge.inria.fr/repositories/snapshots/</url>
                 <snapshots />
             </repository>
+            <repository>
+			    <id>jitpack.io</id>
+			    <url>https://jitpack.io</url>
+			</repository>
         </repositories>
 </project>

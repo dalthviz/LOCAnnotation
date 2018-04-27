@@ -110,6 +110,7 @@ public class FP
 	private static FPProcessor doFPProcess(String[] args) {
 		final Launcher launcher = new Launcher();
 		launcher.setArgs(args);
+		launcher.getEnvironment().setAutoImports(true);
 		launcher.run();
 
 		final Factory factory = launcher.getFactory();

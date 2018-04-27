@@ -1,6 +1,6 @@
 package co.edu.uniandes.fp.analysis;
 
-import co.edu.uniandes.fp.annotation.FP;
+import co.edu.uniandes.annotation.FP;
 
 public class Test {
 	
