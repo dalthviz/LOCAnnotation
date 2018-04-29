@@ -22,6 +22,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import co.edu.uniandes.fp.processor.FPProcessor;
+import co.edu.uniandes.fp.processor.JSFPProcessor;
 import spoon.Launcher;
 import spoon.processing.ProcessingManager;
 import spoon.reflect.factory.Factory;
@@ -33,16 +34,28 @@ import spoon.support.QueueProcessingManager;
 public class FP 
 {
 	private static String[] paths;
+
+	private static String[] jsPaths;
+	
 	/**
 	 * Run the application
-	 * @param a
+	 * @param arg
 	 */
-	public static void main( String[] a )
+	public static void main( String[] arg )
 	{
 		readProperties();
+		readJSProperties();
 
+		javaAnalysis();
+		jsAnalysis();
+	}
+
+	/**
+	 * Make java analysis
+	 */
+	public static void javaAnalysis() {
 		for(int i = 0; i < paths.length; i++) {
-			
+
 			String path = paths[i];
 			final String[] args = {
 					"-i", path,
@@ -65,7 +78,38 @@ public class FP
 				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+	}
 
+	/**
+	 * Make java analysis
+	 */
+	public static void jsAnalysis() {
+		for(int i = 0; i < jsPaths.length; i++) {
+
+			String path = jsPaths[i];
+			try {
+				// Total LOC
+				double lines = 0.0;
+				List<File> files = Files.walk(Paths.get(path))
+						.filter(Files::isRegularFile)
+						.map(Path::toFile)
+						.collect(Collectors.toList());
+				for (File file : files) {
+					lines += (double)getLines(file);
+				}
+				//CSV generation;
+				HashMap<String, Double> cases = doJSFPProcess(path).countOfCaseMethods;
+				CSVExport("target/spooned/export"+i+".csv", cases, lines, path);
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+	
+	private static JSFPProcessor doJSFPProcess(String path) {
+		JSFPProcessor processor = new JSFPProcessor(path);
+		
+		return processor;
 	}
 
 	/**
@@ -86,6 +130,40 @@ public class FP
 			paths = new String[numPaths];
 			for(int i = 0; i<numPaths; i++) {
 				paths[i] = prop.getProperty("path"+i);
+			}
+
+		} catch (IOException ex) {
+			JOptionPane.showMessageDialog(null, "Invalid properties file", "Error", JOptionPane.ERROR_MESSAGE);
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(null, "Invalid properties file", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+
+	}
+	
+	/**
+	 * Read properties file with the paths to analyze
+	 */
+	private static void readJSProperties() {
+		Properties prop = new Properties();
+		InputStream input = null;
+		try {
+
+			input = new FileInputStream("./data/jspaths.properties");
+
+			// load a properties file
+			prop.load(input);
+
+			// get the property value and print it out
+			int numPaths = Integer.parseInt(prop.getProperty("packages"));
+			jsPaths = new String[numPaths];
+			for(int i = 0; i<numPaths; i++) {
+				jsPaths[i] = prop.getProperty("path"+i);
 			}
 
 		} catch (IOException ex) {
@@ -155,7 +233,7 @@ public class FP
 			System.out.format(leftAlignFormat, "Total", lines, 1.0);
 			csvPrinter.printRecord("Total", lines, 1.0);
 			csvPrinter.printRecord("PATH", path);
-			
+
 
 			System.out.format("-------|--------|------------%n");
 
