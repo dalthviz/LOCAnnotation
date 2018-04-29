@@ -53,15 +53,14 @@ public class JSFPProcessor {
 
 		String t = br.readLine();
 		if (t.startsWith("<!") || t.startsWith("//")) {
-			t = t.trim().replace("//", "").replace("<!", "").replace("-", "").replace(">", "");
+			t = t.trim().replace("//", "").replace("<!", "").replace("-", "").replace(">", "").replace(" ","");
 			Double i = 0.0;
 			String[] annotations = t.split(",");
 
-			if (annotations.length > 0) {
+			if (annotations.length > 0 && !"".equals(annotations[0])) {
 				for (String string : annotations) {
 					string = string.trim();
 				}
-
 				boolean isEOF=false;
 				do{
 					t = br.readLine();

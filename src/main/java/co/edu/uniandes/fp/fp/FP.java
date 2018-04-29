@@ -99,7 +99,7 @@ public class FP
 				}
 				//CSV generation;
 				HashMap<String, Double> cases = doJSFPProcess(path).countOfCaseMethods;
-				CSVExport("target/spooned/export"+i+".csv", cases, lines, path);
+				CSVExport("target/spooned/exportJS"+i+".csv", cases, lines, path);
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
@@ -217,7 +217,7 @@ public class FP
 			double countToAdd = 0.0;
 			System.out.format(path+"%n");
 			System.out.format("-------|--------|------------%n");
-			System.out.format(" Case  | LOC    | Proportion %n");
+			System.out.format(" Case  | LOC    | Percentage %n");
 			System.out.format("-------|--------|------------%n");
 
 			for (Entry<String, Double> entry: cases.entrySet()) {
@@ -226,12 +226,12 @@ public class FP
 			countToAdd = (lines - countToAdd) / (double) cases.size();
 			for (Entry<String, Double> entry: cases.entrySet()) {
 				System.out.format(leftAlignFormat, entry.getKey(), entry.getValue() + countToAdd,
-						(entry.getValue() + countToAdd)/lines);
+						((entry.getValue() + countToAdd)/lines)*100);
 				csvPrinter.printRecord(entry.getKey(), entry.getValue() + countToAdd,
-						(entry.getValue() + countToAdd)/lines);
+						((entry.getValue() + countToAdd)/lines)*100);
 			}
-			System.out.format(leftAlignFormat, "Total", lines, 1.0);
-			csvPrinter.printRecord("Total", lines, 1.0);
+			System.out.format(leftAlignFormat, "Total", lines, 1.0*100);
+			csvPrinter.printRecord("Total", lines, 1.0*100);
 			csvPrinter.printRecord("PATH", path);
 
 
@@ -259,7 +259,8 @@ public class FP
 				t=t.replaceAll("\\n|\\t|\\s", "");
 				if(!t.equals("") && !t.startsWith("//")
 						&& !t.startsWith("/*") && !t.startsWith("*")
-						&& !t.startsWith("*/") && !t.startsWith("@FP")) {
+						&& !t.startsWith("*/") && !t.startsWith("@FP")
+						&& !t.startsWith("<!")) {
 					i = i + 1;
 				}
 			}
