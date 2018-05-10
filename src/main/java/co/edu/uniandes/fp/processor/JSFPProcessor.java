@@ -53,7 +53,9 @@ public class JSFPProcessor {
 
 		String t = br.readLine();
 		if (t.startsWith("<!") || t.startsWith("//") && !f.getName().toLowerCase().endsWith(".java")) {
-			t = t.trim().replace("//", "").replace("<!", "").replace("-", "").replace(">", "").replace(" ","");
+			t = t.trim().replace("//", "").replace("<!", "")
+						.replace("-", "").replace(">", "")
+						.replace(" ","").replace("DOCTYPEhtml","");
 			Double i = 0.0;
 			String[] annotations = t.split(",");
 
